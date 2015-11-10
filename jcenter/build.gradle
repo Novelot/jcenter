@@ -1,3 +1,22 @@
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:1.3.1'
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.3.1'
+//        classpath "org.jfrog.buildinfo:build-info-extractor-gradle:3.1.1"
+        // NOTE: Do not place your application dependencies here; they belong
+        // in the individual module build.gradle files
+    }
+}
+
+allprojects {
+    repositories {
+        jcenter()
+    }
+}
+
 apply plugin: 'com.android.library'
 
 android {
@@ -64,27 +83,27 @@ bintray {
     // dryRun = false //Whether to run this as dry-run, without deploying
 
     //Package configuration. The plugin will use the repo and name properties to check if the package already exists. In that case, there's no need to configure the other package properties (like userOrg, desc, etc).
-    pkg {
-        repo = 'maven'
-        name = PROJ_NAME
+    pkg {//包
+        repo = 'maven'//仓库名称
+        name = PROJ_NAME//包名
         userOrg = 'novelot' //An optional organization name when the repo belongs to one of the user's orgs
-        desc = PROJ_DESCRIPTION
-        websiteUrl = PROJ_WEBSITEURL
-        issueTrackerUrl = PROJ_ISSUETRACKERURL
-        vcsUrl = PROJ_VCSURL
-        licenses = ['Apache-2.0']
-        labels = ['novelot', 'utils', 'android']
-        publicDownloadNumbers = true
+        desc = PROJ_DESCRIPTION//描述
+        websiteUrl = PROJ_WEBSITEURL//页面
+        issueTrackerUrl = PROJ_ISSUETRACKERURL//事务页面
+        vcsUrl = PROJ_VCSURL//版本管理
+        licenses = ['Apache-2.0']//协议
+        labels = ['novelot', 'utils', 'android']//标签
+        publicDownloadNumbers = true//是否公开下载数
         // attributes= ['a': ['ay1', 'ay2'], 'b': ['bee'], c: 'cee'] //Optional package-level attributes
         //Optional version descriptor
-        version {
-            name = PROJ_VERSION //Bintray logical version name
-            //desc = //Optional - Version-specific description'
+        version {//版本
+            name = PROJ_VERSION //Bintray logical version name//版本名
+            desc = PROJ_DESCRIPTION+"-"+PROJ_VERSION//Optional - Version-specific description'//版本描述
             //released  = //Optional - Date of the version release. 2 possible values: date in the format of 'yyyy-MM-dd'T'HH:mm:ss.SSSZZ' OR a java.util.Date instance
-            vcsTag = PROJ_VERSION
+            vcsTag = PROJ_VERSION//
             //attributes = ['gradle-plugin': 'com.use.less:com.use.less.gradle:gradle-useless-plugin'] //Optional version-level attributes
             //Optional configuration for GPG signing
-            gpg {
+            gpg {//加密
                 sign = true //Determines whether to GPG sign the files. The default is false
                 passphrase = 'qijiuhekai' //Optional. The passphrase for GPG signing'
             }
@@ -99,6 +118,10 @@ bintray {
     }
 }
 
+//apply plugin: 'signing'
+//signing {
+//    sign configurations.archives
+//}
 
 publishing {
     publications {
@@ -107,7 +130,7 @@ publishing {
             version version
             artifactId PROJ_NAME
             artifact "build/outputs/aar/app-release.aar"
-            artifact "build/outputs/aar/app-release.aar.asc"
+//            artifact "build/outputs/aar/app-release.aar.asc"
             artifact sourcesJar
             artifact javadocJar
             pom.withXml {
@@ -130,11 +153,8 @@ publishing {
                 license.appendNode('url', PROJ_LICENCE_URL)
                 license.appendNode('distribution', PROJ_LICENCE_DIST)
             }
+           // artifact "build/publications/MyPublication/pom-default.xml"
         }
     }
 }
 
-apply plugin: 'signing'
-signing {
-    sign configurations.archives
-}
