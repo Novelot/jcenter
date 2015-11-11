@@ -46,8 +46,8 @@ dependencies {
 
 apply plugin: 'maven-publish'
 apply plugin: 'com.jfrog.bintray'
-group = PROJ_GROUP
-version = PROJ_VERSION
+group = GROUP
+version = VERSION
 //
 task sourcesJar(type: Jar) {
     from android.sourceSets.main.java.srcDirs
@@ -74,86 +74,37 @@ bintray {
     publications = ['MyPublication']    //When uploading Maven-based publication files
     publish = true            //If version should be auto published after an upload
 
-    // - AND/OR -
-    // filesSpec { //When uploading any arbitrary files ('filesSpec' is a standard Gradle CopySpec)
-    // from 'arbitrary-files'
-    //into 'standalone_files/level1'
-    // rename '(.+)\\.(.+)', '$1-suffix.$2'
-    // }
-    // dryRun = false //Whether to run this as dry-run, without deploying
-
-    //Package configuration. The plugin will use the repo and name properties to check if the package already exists. In that case, there's no need to configure the other package properties (like userOrg, desc, etc).
     pkg {//包
         repo = 'maven'//仓库名称
-        name = PROJ_NAME//包名
+        name = NAME//包名
         userOrg = 'novelot' //An optional organization name when the repo belongs to one of the user's orgs
-        desc = PROJ_DESCRIPTION//描述
-        websiteUrl = PROJ_WEBSITEURL//页面
-        issueTrackerUrl = PROJ_ISSUETRACKERURL//事务页面
-        vcsUrl = PROJ_VCSURL//版本管理
+        desc = DESCRIPTION//描述
+        websiteUrl = WEBSITE_URL//页面
+        issueTrackerUrl = ISSUETRACKER_URL//事务页面
+        vcsUrl = VCS_URL//版本管理
         licenses = ['Apache-2.0']//协议
         labels = ['novelot', 'utils', 'android']//标签
         publicDownloadNumbers = true//是否公开下载数
-        // attributes= ['a': ['ay1', 'ay2'], 'b': ['bee'], c: 'cee'] //Optional package-level attributes
-        //Optional version descriptor
         version {//版本
-            name = PROJ_VERSION //Bintray logical version name//版本名
-            desc = PROJ_DESCRIPTION+"-"+PROJ_VERSION//Optional - Version-specific description'//版本描述
+            name = VERSION //Bintray logical version name//版本名
+            desc = DESCRIPTION + "-" + VERSION////版本描述
             //released  = //Optional - Date of the version release. 2 possible values: date in the format of 'yyyy-MM-dd'T'HH:mm:ss.SSSZZ' OR a java.util.Date instance
-            vcsTag = PROJ_VERSION//
-            //attributes = ['gradle-plugin': 'com.use.less:com.use.less.gradle:gradle-useless-plugin'] //Optional version-level attributes
-            //Optional configuration for GPG signing
+            vcsTag = VERSION//
             gpg {//加密
                 sign = true //Determines whether to GPG sign the files. The default is false
                 passphrase = GPG_PASSWORD //Optional. The passphrase for GPG signing'
             }
-            //Optional configuration for Maven Central sync of the version
-//            mavenCentralSync {
-//                sync = true //Optional (true by default). Determines whether to sync the version to Maven Central.
-//                user = BINTRAY_USER //OSS user token
-//                password = signing.password //OSS user password
-//                close = '1' //Optional property. By default the staging repository is closed and artifacts are released to Maven Central. You can optionally turn this behaviour off (by puting 0 as value) and release the version manually.
-//            }
         }
     }
 }
 
-//apply plugin: 'signing'
-//signing {
-//    sign configurations.archives
-//}
-
 publishing {
     publications {
         MyPublication(MavenPublication) {
-            groupId group
-            version version
-            artifactId PROJ_NAME
-            artifact "build/outputs/aar/jcenter-release.aar"
-//            artifact "build/outputs/aar/app-release.aar.asc"
-            artifact sourcesJar
-            artifact javadocJar
-            pom.withXml {
-                Node root = asNode()
-                root.appendNode('name', PROJ_ARTIFACTID)
-                root.appendNode('description', PROJ_DESCRIPTION)
-                root.appendNode('url', PROJ_WEBSITEURL)
-
-                def issues = root.appendNode('issueManagement')
-                issues.appendNode('system', 'github')
-                issues.appendNode('url', PROJ_ISSUETRACKERURL)
-
-                def scm = root.appendNode('scm')
-                scm.appendNode('url', PROJ_VCSURL)
-                scm.appendNode('connection', PROJ_VCSURL)
-                scm.appendNode('developerConnection', PROJ_SCM_DEV_CONNECTION)
-
-                def license = root.appendNode('licenses').appendNode('license')
-                license.appendNode('name', PROJ_LICENCE_NAME)
-                license.appendNode('url', PROJ_LICENCE_URL)
-                license.appendNode('distribution', PROJ_LICENCE_DIST)
-            }
-           // artifact "build/publications/MyPublication/pom-default.xml"
+            groupId GROUP
+            artifactId ARTIFACT_ID
+            version VERSION
+//            packaging 'aar'
         }
     }
 }
