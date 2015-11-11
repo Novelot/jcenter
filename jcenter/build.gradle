@@ -104,7 +104,6 @@ publishing {
             groupId GROUP
             artifactId ARTIFACT_ID
             version VERSION
-//            packaging 'aar'
         }
     }
 }
