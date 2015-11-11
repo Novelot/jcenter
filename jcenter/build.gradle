@@ -105,7 +105,7 @@ bintray {
             //Optional configuration for GPG signing
             gpg {//加密
                 sign = true //Determines whether to GPG sign the files. The default is false
-                passphrase = 'qijiuhekai' //Optional. The passphrase for GPG signing'
+                passphrase = signing.password //Optional. The passphrase for GPG signing'
             }
             //Optional configuration for Maven Central sync of the version
 //            mavenCentralSync {
