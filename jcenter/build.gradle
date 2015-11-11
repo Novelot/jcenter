@@ -105,7 +105,7 @@ bintray {
             //Optional configuration for GPG signing
             gpg {//加密
                 sign = true //Determines whether to GPG sign the files. The default is false
-                passphrase = signing.password //Optional. The passphrase for GPG signing'
+                passphrase = GPG_PASSWORD //Optional. The passphrase for GPG signing'
             }
             //Optional configuration for Maven Central sync of the version
 //            mavenCentralSync {
@@ -129,7 +129,7 @@ publishing {
             groupId group
             version version
             artifactId PROJ_NAME
-            artifact "build/outputs/aar/app-release.aar"
+            artifact "build/outputs/aar/jcenter-release.aar"
 //            artifact "build/outputs/aar/app-release.aar.asc"
             artifact sourcesJar
             artifact javadocJar
