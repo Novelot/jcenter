@@ -60,35 +60,6 @@ publishing {
             groupId GROUP
             artifactId ARTIFACT_ID
             version VERSION
-//            pom.project {
-//                name ARTIFACT_ID
-//                packaging 'aar'
-//                description DESCRIPTION
-//                url WEBSITE_URL
-//
-//                scm {
-//                    connection VCS_URL
-//                    developerConnection SCM_DEV_CONNECTION
-//                    url VCS_URL
-//                }
-//
-//                licenses {
-//                    license {
-//                        name LICENCE_NAME
-//                        url LICENCE_URL
-//                    }
-//                }
-//
-//
-//
-//                developers {
-//                    developer {
-//                        id DEVELOPER_ID
-//                        name DEVELOPER_NAME
-//                        email DEVELOPER_EMAIL
-//                    }
-//                }
-//            }
 
             pom.withXml {
                 Node root = asNode()
