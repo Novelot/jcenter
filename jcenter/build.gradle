@@ -5,9 +5,7 @@ buildscript {
     dependencies {
         classpath 'com.android.tools.build:gradle:1.3.1'
         classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.3.1'
-//        classpath "org.jfrog.buildinfo:build-info-extractor-gradle:3.1.1"
-        // NOTE: Do not place your application dependencies here; they belong
-        // in the individual module build.gradle files
+
     }
 }
 
@@ -40,71 +38,9 @@ android {
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile 'com.android.support:appcompat-v7:23.1.0'
+//    compile 'com.clearstarrysky.lib:jcenter:0.0.15'
+    compile(group: 'com.novelot.lib', name: 'jcenter', version: '0.0.16', ext: 'aar')
 }
 
 //apply from: 'bintray.gradle'
-
-apply plugin: 'maven-publish'
-apply plugin: 'com.jfrog.bintray'
-group = GROUP
-version = VERSION
-//
-task sourcesJar(type: Jar) {
-    from android.sourceSets.main.java.srcDirs
-    classifier = 'sources'
-}
-task javadoc(type: Javadoc) {
-    source = android.sourceSets.main.java.srcDirs
-    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
-}
-task javadocJar(type: Jar, dependsOn: javadoc) {
-    from javadoc.destinationDir
-    classifier = 'javadoc'
-}
-artifacts {
-    archives sourcesJar
-    archives javadocJar
-}
-
-bintray {
-    user = hasProperty("bintrayUser") ? getProperty("bintrayUser") : getProperty("BINTRAY_USER")
-    key = hasProperty("bintrayKey") ? getProperty("bintrayKey") : getProperty("BINTRAY_KEY")
-
-    configurations = ['archives']    //When uploading configuration files
-    publications = ['MyPublication']    //When uploading Maven-based publication files
-    publish = true            //If version should be auto published after an upload
-
-    pkg {//包
-        repo = 'maven'//仓库名称
-        name = NAME//包名
-        userOrg = 'novelot' //An optional organization name when the repo belongs to one of the user's orgs
-        desc = DESCRIPTION//描述
-        websiteUrl = WEBSITE_URL//页面
-        issueTrackerUrl = ISSUETRACKER_URL//事务页面
-        vcsUrl = VCS_URL//版本管理
-        licenses = ['Apache-2.0']//协议
-        labels = ['novelot', 'utils', 'android']//标签
-        publicDownloadNumbers = true//是否公开下载数
-        version {//版本
-            name = VERSION //Bintray logical version name//版本名
-            desc = DESCRIPTION + "-" + VERSION////版本描述
-            //released  = //Optional - Date of the version release. 2 possible values: date in the format of 'yyyy-MM-dd'T'HH:mm:ss.SSSZZ' OR a java.util.Date instance
-            vcsTag = VERSION//
-            gpg {//加密
-                sign = true //Determines whether to GPG sign the files. The default is false
-                passphrase = GPG_PASSWORD //Optional. The passphrase for GPG signing'
-            }
-        }
-    }
-}
-
-publishing {
-    publications {
-        MyPublication(MavenPublication) {
-            groupId GROUP
-            artifactId ARTIFACT_ID
-            version VERSION
-        }
-    }
-}
 

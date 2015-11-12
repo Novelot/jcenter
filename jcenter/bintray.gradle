@@ -1,116 +1,120 @@
-group = PROJ_GROUP
-version = PROJ_VERSION
-project.archivesBaseName = PROJ_ARTIFACTID
+//apply from: 'bintray.gradle'
 
-apply plugin: 'com.jfrog.bintray'
-apply plugin: "com.jfrog.artifactory"
 apply plugin: 'maven-publish'
-
+apply plugin: 'com.jfrog.bintray'
+group = GROUP
+version = VERSION
+//
 task sourcesJar(type: Jar) {
     from android.sourceSets.main.java.srcDirs
     classifier = 'sources'
 }
-
 task javadoc(type: Javadoc) {
     source = android.sourceSets.main.java.srcDirs
-    classpath += configurations.compile
     classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
 }
-
 task javadocJar(type: Jar, dependsOn: javadoc) {
-    classifier = 'javadoc'
     from javadoc.destinationDir
+    classifier = 'javadoc'
+}
+artifacts {
+    archives sourcesJar
+    archives javadocJar
 }
 
-javadoc {
-    options{
-        encoding "UTF-8"
-        charSet 'UTF-8'
-        author true
-        version true
-        links "http://docs.oracle.com/javase/7/docs/api"
-        title PROJ_ARTIFACTID
-    }
-}
+bintray {
+    user = hasProperty("bintrayUser") ? getProperty("bintrayUser") : getProperty("BINTRAY_USER")
+    key = hasProperty("bintrayKey") ? getProperty("bintrayKey") : getProperty("BINTRAY_KEY")
 
+    configurations = ['archives']    //When uploading configuration files
+    publications = ['MyPublication']    //When uploading Maven-based publication files
+    publish = true            //If version should be auto published after an upload
 
-def pomConfig = {
-    licenses {
-        license {
-            name "The Apache Software License, Version 2.0"
-            url "http://www.apache.org/licenses/LICENSE-2.0.txt"
-            distribution "repo"
-        }
-    }
-    developers {
-        developer {
-            id DEVELOPER_ID
-            name DEVELOPER_NAME
-            email DEVELOPER_EMAIL
+    pkg {//包
+        repo = 'maven'//仓库名称
+        name = NAME//包名
+        //userOrg = 'novelot' //An optional organization name when the repo belongs to one of the user's orgs
+        desc = DESCRIPTION//描述
+        websiteUrl = WEBSITE_URL//页面
+        issueTrackerUrl = ISSUETRACKER_URL//事务页面
+        vcsUrl = VCS_URL//版本管理
+        licenses = ['Apache-2.0']//协议
+        labels = ['novelot', 'utils', 'android']//标签
+        publicDownloadNumbers = true//是否公开下载数
+        version {//版本
+            name = VERSION //Bintray logical version name//版本名
+            desc = DESCRIPTION + "-" + VERSION////版本描述
+            //released  = //Optional - Date of the version release. 2 possible values: date in the format of 'yyyy-MM-dd'T'HH:mm:ss.SSSZZ' OR a java.util.Date instance
+            vcsTag = VERSION//
+            gpg {//加密
+                sign = true //Determines whether to GPG sign the files. The default is false
+                passphrase = GPG_PASSWORD //Optional. The passphrase for GPG signing'
+            }
         }
     }
 }
 
 publishing {
     publications {
-        mavenJava(MavenPublication) {
-            artifactId PROJ_ARTIFACTID
-            artifact javadocJar
-            artifact sourcesJar
+        MyPublication(MavenPublication) {
+            groupId GROUP
+            artifactId ARTIFACT_ID
+            version VERSION
+//            pom.project {
+//                name ARTIFACT_ID
+//                packaging 'aar'
+//                description DESCRIPTION
+//                url WEBSITE_URL
+//
+//                scm {
+//                    connection VCS_URL
+//                    developerConnection SCM_DEV_CONNECTION
+//                    url VCS_URL
+//                }
+//
+//                licenses {
+//                    license {
+//                        name LICENCE_NAME
+//                        url LICENCE_URL
+//                    }
+//                }
+//
+//
+//
+//                developers {
+//                    developer {
+//                        id DEVELOPER_ID
+//                        name DEVELOPER_NAME
+//                        email DEVELOPER_EMAIL
+//                    }
+//                }
+//            }
 
-            pom{
-                packaging 'aar'
-            }
             pom.withXml {
-                def root = asNode()
-                root.appendNode('description', PROJ_DESCRIPTION)
-                root.children().last() + pomConfig
+                Node root = asNode()
+                root.appendNode('name', ARTIFACT_ID)
+                root.appendNode('description', DESCRIPTION)
+                root.appendNode('url', WEBSITE_URL)
+
+                def issues = root.appendNode('issueManagement')
+                issues.appendNode('system', 'github')
+                issues.appendNode('url', ISSUETRACKER_URL)
+
+                def scm = root.appendNode('scm')
+                scm.appendNode('url', VCS_URL)
+                scm.appendNode('connection', VCS_URL)
+                scm.appendNode('developerConnection', SCM_DEV_CONNECTION)
+
+                def license = root.appendNode('licenses').appendNode('license')
+                license.appendNode('name', LICENCE_NAME)
+                license.appendNode('url', LICENCE_URL)
+                license.appendNode('distribution', LICENCE_DIST)
+
+                def developer = root.appendNode('developers').appendNode('developer')
+                developer.appendNode('id', DEVELOPER_ID)
+                developer.appendNode('name', DEVELOPER_NAME)
+                developer.appendNode('email', DEVELOPER_EMAIL)
             }
-        }
-    }
-}
-
-afterEvaluate {
-    //publishing.publications.mavenJava.artifact(bundleRelease)
-}
-
-bintray {
-    user = hasProperty("bintrayUser")?getProperty("bintrayUser"):getProperty("BINTRAY_USER") 
-    key = hasProperty("bintrayKey")?getProperty("bintrayKey"):getProperty("BINTRAY_KEY")
-
-    publications = ['mavenJava']
-    publish = true
-
-    pkg {
-        repo = 'maven'
-        name = PROJ_NAME
-        desc = PROJ_DESCRIPTION
-        websiteUrl = PROJ_WEBSITEURL
-        issueTrackerUrl = PROJ_ISSUETRACKERURL
-        vcsUrl = PROJ_VCSURL
-        licenses = ['Apache-2.0']
-        publicDownloadNumbers = true
-    }
-}
-
-artifactory {
-    contextUrl = 'http://oss.jfrog.org/artifactory'
-    resolve {
-        repository {
-            repoKey = 'libs-release'
-        }
-    }
-    publish {
-        repository {
-            repoKey = 'oss-snapshot-local' //The Artifactory repository key to publish to
-            username = bintray.user
-            password = bintray.key
-            maven = true
-        }
-        defaults {
-            //这里的名字和上面红色的名字一致即可，会将其包含的输出上传到jfrog上去
-            publications('mavenJava')
-            publishArtifacts = true
         }
     }
 }
