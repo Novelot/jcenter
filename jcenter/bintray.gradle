@@ -33,7 +33,7 @@ bintray {
     pkg {//包
         repo = 'maven'//仓库名称
         name = NAME//包名
-        //userOrg = 'novelot' //An optional organization name when the repo belongs to one of the user's orgs
+        //userOrg = 'novelot' //组织名,如果设置,会自动在该包名下创建包
         desc = DESCRIPTION//描述
         websiteUrl = WEBSITE_URL//页面
         issueTrackerUrl = ISSUETRACKER_URL//事务页面
@@ -61,6 +61,7 @@ publishing {
             artifactId ARTIFACT_ID
             version VERSION
 
+            //补充POM文件的其他信息
             pom.withXml {
                 Node root = asNode()
                 root.appendNode('name', ARTIFACT_ID)
